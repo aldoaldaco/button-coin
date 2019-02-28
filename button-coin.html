@@ -1,0 +1,175 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="button-coin">
+  <template>
+    <!--<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">-->
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
+      :host {
+        display: block;
+        font-family: 'Press Start 2P', cursive;
+      }
+      p {
+        font-size: 25px;
+        font-weight: bold;
+      }
+      .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .controls {
+        display: flex;
+      }
+      .message {
+        position: absolute;
+        top: -90px;
+        left: 60px;
+      }
+      .animation {
+        width: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+      }
+      .init-coin {
+        position: absolute;
+        top: 13px;
+        left: 13px;
+        z-index: -1;
+      }
+      @keyframes coin {
+        0% {left: 13px; top: 13px;}
+        14.28% {left:100px; top:-100px;}
+        28.56% {left:200px; top:-150px;}
+        42.84% {left:300px; top:-200px;}
+        57.12% {left:400px; top:-200px;}
+        71.4% {left:500px; top:-150px;}
+        85.68% {left:600px; top:-100px;}
+        100% {left:700px; top:0;}
+      }
+      .animate-coin {
+        animation: coin 900ms;
+      }
+      .init-avatar {
+        position: absolute;
+        top: 300px;
+        left: 30px;
+        z-index: -1;
+      }
+      @keyframes avatar {
+        0% {top: 200px; left: 30px;}
+        20% {top: 150px; left: 30px;}
+        40% {top: 100px;left: 30px;}
+        60% {top: 100px;left: 30px;}
+        80% {top: 150px;left: 30px;}
+        100% {top: 200px;left: 30px;}
+      }
+      .animate-avatar {
+        animation: avatar 300ms;
+      }
+    </style>
+    <div class="container">
+      <div class="animation">
+        <div class="controls">
+          <button on-click="_sendMoney" class="nes-btn is-warning">
+            <i class="nes-icon coin is-large"></i>
+          </button>
+        </div>
+        <div id="coin" class="init-coin" hidden="[[showCoin]]">
+          <i class="nes-icon coin is-large"></i>
+        </div>
+        <div class="message -left" hidden="[[!showMessage]]">
+          <div class="nes-balloon from-left">
+            <p>+ 10</p>
+          </div>
+        </div>
+      </div>
+      <div id="avatar" class="init-avatar">
+        <img src="../mario.png" width="83px" height="150px" alt="mario">
+      </div>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `button-coin`
+     * push to send money
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ButtonCoin extends Polymer.Element {
+      static get is() { return 'button-coin'; }
+      static get properties() {
+        return {
+          showMessage: {
+            type: Boolean,
+            value: false
+          },
+          showCoin: {
+            type: Boolean,
+            value: false
+          },
+          score: {
+            type: Number,
+            value: 0
+          },
+          canPress: {
+            type: Boolean,
+            value: true
+          }
+        };
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        document.addEventListener('keypress', (event) => {
+          if (event.code === "Space") {
+            this._upAvatar();
+          }
+        });
+        this.$.avatar.addEventListener('animationend', () => {
+          this.$.avatar.classList.remove('animate-avatar');
+          this._sendMoney();
+        });
+        this.$.coin.addEventListener('animationend', () => {
+          this.$.coin.classList.remove('animate-coin');
+          this.canPress = true;
+        });
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.$.coin.removeEventListener('animationend', () => {
+          this.showCoin = false;
+        });
+        this.$.avatar.removeEventListener('animationend', () => {
+          this.showCoin = false;
+        });
+      }
+      _upAvatar() {
+        if(this.canPress) {
+          this.$.avatar.classList.add('animate-avatar');
+        }
+      }
+      _sendMoney() {
+        if(this.canPress) {
+          this.canPress = false;
+          this.showMessage = true;
+          this.showCoin = false;
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 100);
+          this.score += 10;
+          this.$.coin.classList.add('animate-coin');
+        }
+      }
+    }
+
+    window.customElements.define(ButtonCoin.is, ButtonCoin);
+  </script>
+</dom-module>
