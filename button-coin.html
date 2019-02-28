@@ -4,10 +4,8 @@
   <template>
     <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
-      /*@import url('https://fonts.googleapis.com/css?family=Press+Start+2P');*/
       :host {
         display: block;
-        margin-top: 200px;
       }
       p {
         font-size: 25px;
@@ -18,23 +16,24 @@
         width: 100%;
         display: flex;
         flex-direction: row;
+        z-index: 0;
       }
       .controls {
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         display: flex;
       }
       .message {
         position: absolute;
         top: -90px;
-        left: 60px;
+        left: 13px;
       }
       .init-coin {
-        width: 100px;
-        height: 80px;
+        width: 50px;
+        height: 30px;
         position: absolute;
         top: 13px;
-        left: 13px;
+        left: 5px;
         z-index: -1;
       }
       @keyframes coin {
