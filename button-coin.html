@@ -2,26 +2,26 @@
 
 <dom-module id="button-coin">
   <template>
-    <!--<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">-->
     <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
-      @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
+      /*@import url('https://fonts.googleapis.com/css?family=Press+Start+2P');*/
       :host {
         display: block;
-        font-family: 'Press Start 2P', cursive;
+        margin-top: 200px;
       }
       p {
         font-size: 25px;
         font-weight: bold;
       }
-      .container {
+      .animation {
+        position: relative;
         width: 100%;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        flex-direction: row;
       }
       .controls {
+        width: 100px;
+        height: 100px;
         display: flex;
       }
       .message {
@@ -29,13 +29,9 @@
         top: -90px;
         left: 60px;
       }
-      .animation {
-        width: 100%;
-        position: relative;
-        display: flex;
-        flex-direction: row;
-      }
       .init-coin {
+        width: 100px;
+        height: 80px;
         position: absolute;
         top: 13px;
         left: 13px;
@@ -54,42 +50,18 @@
       .animate-coin {
         animation: coin 900ms;
       }
-      .init-avatar {
-        position: absolute;
-        top: 300px;
-        left: 30px;
-        z-index: -1;
-      }
-      @keyframes avatar {
-        0% {top: 200px; left: 30px;}
-        20% {top: 150px; left: 30px;}
-        40% {top: 100px;left: 30px;}
-        60% {top: 100px;left: 30px;}
-        80% {top: 150px;left: 30px;}
-        100% {top: 200px;left: 30px;}
-      }
-      .animate-avatar {
-        animation: avatar 300ms;
-      }
     </style>
-    <div class="container">
-      <div class="animation">
-        <div class="controls">
-          <button on-click="_sendMoney" class="nes-btn is-warning">
-            <i class="nes-icon coin is-large"></i>
-          </button>
-        </div>
-        <div id="coin" class="init-coin" hidden="[[showCoin]]">
-          <i class="nes-icon coin is-large"></i>
-        </div>
-        <div class="message -left" hidden="[[!showMessage]]">
-          <div class="nes-balloon from-left">
-            <p>+ 10</p>
-          </div>
-        </div>
+    <div class="animation">
+      <div class="controls" on-click="_sendMoney">
+        <img src="../box.png" width="100%" height="100%" alt="box">
       </div>
-      <div id="avatar" class="init-avatar">
-        <img src="../mario.png" width="83px" height="150px" alt="mario">
+      <div id="coin" class="init-coin" hidden="[[showCoin]]">
+        <img src="../coin.png" width="100%" height="100%" alt="box">
+      </div>
+      <div class="message -left" hidden="[[!showMessage]]">
+        <div class="nes-balloon from-left">
+          <p>+ 10 coins</p>
+        </div>
       </div>
     </div>
   </template>
@@ -117,7 +89,8 @@
           },
           score: {
             type: Number,
-            value: 0
+            value: 0,
+            notify: true
           },
           canPress: {
             type: Boolean,
@@ -127,15 +100,6 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        document.addEventListener('keypress', (event) => {
-          if (event.code === "Space") {
-            this._upAvatar();
-          }
-        });
-        this.$.avatar.addEventListener('animationend', () => {
-          this.$.avatar.classList.remove('animate-avatar');
-          this._sendMoney();
-        });
         this.$.coin.addEventListener('animationend', () => {
           this.$.coin.classList.remove('animate-coin');
           this.canPress = true;
@@ -143,17 +107,10 @@
       }
       disconnectedCallback() {
         super.disconnectedCallback();
-        this.$.coin.removeEventListener('animationend', () => {
-          this.showCoin = false;
-        });
         this.$.avatar.removeEventListener('animationend', () => {
           this.showCoin = false;
+          this.canPress = false;
         });
-      }
-      _upAvatar() {
-        if(this.canPress) {
-          this.$.avatar.classList.add('animate-avatar');
-        }
       }
       _sendMoney() {
         if(this.canPress) {
