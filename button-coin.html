@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
 
 <dom-module id="button-coin">
   <template>
@@ -60,17 +61,21 @@
         width: 100%;
         height: 100%;
       }
+      .round {
+        border-radius: 4px;
+      }
     </style>
     <div class="animation">
       <div class="controls" on-click="_sendMoney">
-        <img src="../images/box.png" alt="box">
+        <img hidden="[[!canPress]]" src="../images/box.png" alt="box">
+        <img class="round" hidden="[[canPress]]" src="../images/block.png" alt="block">
       </div>
       <div id="coin" class="init-coin" hidden="[[showCoin]]">
-        <img src="../images/coin.png" width="100%" height="100%" alt="box">
+        <img src="../images/coin.png" width="100%" height="100%" alt="coin">
       </div>
       <div class="message -left" hidden="[[!showMessage]]">
         <div class="nes-balloon from-left">
-          <p>+ 10 coins</p>
+          <p>+ 10</p>
         </div>
       </div>
     </div>
@@ -107,6 +112,9 @@
             value: true
           }
         };
+      }
+      constructor() {
+        super();
       }
       connectedCallback() {
         super.connectedCallback();
